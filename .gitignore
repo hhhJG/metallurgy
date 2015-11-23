@@ -4,3 +4,10 @@ Project1/Project1.sln
 *.vcxproj
 Project1/Project1/Project1.vcxproj.filters
 *.suo
+Project1/Debug/Project1.exe
+*.ilk
+*.pdb
+*.obj
+*.tlog
+*.log
+*.idb
