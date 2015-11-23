@@ -1,0 +1,6 @@
+Project1/Project1.opensdf
+*.sdf
+Project1/Project1.sln
+*.vcxproj
+Project1/Project1/Project1.vcxproj.filters
+*.suo
