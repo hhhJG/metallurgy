@@ -55,7 +55,7 @@ void DataOperation::LoadFile(const char* t_path)
 			{
 				mSolidID ++;
 				gSolidCount ++;
-				double mModulus = 1.0;
+				double mModulus = 1.77;
 				Solid mOneSolidObj(mModulus, mSolidID);
 				this->gAllSolidVec.push_back(mOneSolidObj);
 			}
