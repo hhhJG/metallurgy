@@ -1,6 +1,8 @@
 #include "DataOperation.h"
-#include "SixPoint.h"
+#include "Solution.h"
 #include "CombinedSet.h"
+#include "MySqlDeal.h"
+
 
 #include <iostream>
 #include <string>
@@ -12,19 +14,18 @@
 #include <sstream>
 using namespace std;
 
-bool SortByLength(list<int>& tFirst, list<int>& tSecond)
-{
-	return tFirst.size() > tSecond.size();
-}
-
-
 
 int main()
 {
 
-	/*char* PATH = "quexian.txt";
+	char* PATH = "quexian.txt";
 	DataOperation mDataObj;
-	mDataObj.LoadFile(PATH);*/
+	mDataObj.LoadFile(PATH);
+	
+	Solution mSolution(mDataObj.GetAllSolidVecP());
+	mSolution.Method(111);
+	mSolution.DisplaySolution();
+
 
 	/*vector<list<int>> gClusterResult;
 	list<int> mOneClusterLt;
@@ -79,6 +80,8 @@ int main()
 	cout << endl;
 	mCombinedSetObj.Sort();
 	mCombinedSetObj.Display();*/
+
+
 
 	system("pause");
 	return 0;
