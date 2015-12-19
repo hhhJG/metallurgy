@@ -92,6 +92,7 @@ void CombinedSet::Display(int* tCode)
 
 void CombinedSet::Display()
 {
+	cout << "互补子集合begin：" << endl;
 	vector<list<int>>::iterator mIter = this->gResultVecLt.begin();
 	while(mIter != this->gResultVecLt.end())
 	{
@@ -105,6 +106,7 @@ void CombinedSet::Display()
 		cout<<endl;
 		mIter ++;
 	}
+	cout << "互补子集合end：" << endl;
 }
 
 int GetGroupCount(list<int>& tData)

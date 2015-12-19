@@ -14,53 +14,57 @@ Solid::~Solid(void)
 {
 }
 
-Solid::Solid(double tModulus, int tID)
+Solid::Solid(double tModulus, int tID, double tJuLeiRadius)
 {
 	this->gModulus = tModulus;
 	this->gID = tID;
+	this->gJuLeiRadius = tJuLeiRadius;
 }
 
 
-void Solid::CompareForCuboid()
+void Solid::CompareForCuboid(list<Point> *tThisSolidPointLt)
 {
-	list<Point>::iterator mPointLtIter = gThisSolidPointLt.begin();	
+	list<Point>::iterator mPointLtIter = tThisSolidPointLt->begin();
 	Point& mFirstPoint = *mPointLtIter;
-	this->gXMax = &mFirstPoint;
-	this->gXMin = &mFirstPoint;
-	this->gYMax = &mFirstPoint;
-	this->gYMin = &mFirstPoint;
-	this->gZMax = &mFirstPoint;
-	this->gZMin = &mFirstPoint;
+	this->gXMax = mFirstPoint;
+	this->gXMin = mFirstPoint;
+	this->gYMax = mFirstPoint;
+	this->gYMin = mFirstPoint;
+	this->gZMax = mFirstPoint;
+	this->gZMin = mFirstPoint;
 	mPointLtIter ++;
 
-	while(mPointLtIter != gThisSolidPointLt.end())
+	
+
+
+	while(mPointLtIter != tThisSolidPointLt->end())
 	{
 		Point& mOnePoint = *mPointLtIter;
-		if(this->gXMax->GetX() < mOnePoint.GetX())
+		if(this->gXMax.GetX() < mOnePoint.GetX())
 		{
-			this->gXMax = &mOnePoint;
+			this->gXMax = mOnePoint;
 		}
-		else if(this->gXMin->GetX() > mOnePoint.GetX())
+		else if(this->gXMin.GetX() > mOnePoint.GetX())
 		{
-			this->gXMin = &mOnePoint;
-		}
-
-		if(this->gYMax->GetY() < mOnePoint.GetY())
-		{
-			this->gYMax = &mOnePoint;
-		}
-		else if(this->gYMin->GetY() > mOnePoint.GetY())
-		{
-			this->gYMin = &mOnePoint;
+			this->gXMin = mOnePoint;
 		}
 
-		if(this->gZMax->GetZ() < mOnePoint.GetZ())
+		if(this->gYMax.GetY() < mOnePoint.GetY())
 		{
-			this->gZMax = &mOnePoint;
+			this->gYMax = mOnePoint;
 		}
-		else if(this->gZMin->GetZ() > mOnePoint.GetZ())
+		else if(this->gYMin.GetY() > mOnePoint.GetY())
 		{
-			this->gZMin = &mOnePoint;
+			this->gYMin = mOnePoint;
+		}
+
+		if(this->gZMax.GetZ() < mOnePoint.GetZ())
+		{
+			this->gZMax = mOnePoint;
+		}
+		else if(this->gZMin.GetZ() > mOnePoint.GetZ())
+		{
+			this->gZMin = mOnePoint;
 		}
 		mPointLtIter ++;
 	}
@@ -68,41 +72,42 @@ void Solid::CompareForCuboid()
 
 Point* Solid::GetXMax()
 {
-	return this->gXMax;
+	return &gXMax;
 }
 
 	
 Point* Solid::GetXMin()
 {
-	return this->gXMin;
+	return &gXMin;
 }
 
 
 Point* Solid::GetYMax()
 {
-	return this->gYMax;
+	return &gYMax;
 }
 
 
 Point* Solid::GetYMin()
 {
-	return this->gYMin;
+	return &gYMin;
 }
 
 Point* Solid::GetZMax()
 {
-	return this->gZMax;
+	return &gZMax;
 }
 
 Point* Solid::GetZMin()
 {
-	return this->gZMin;
+	return &gZMin;
 }
 
-void Solid::SetFactor(double tModulus, int tID)
+void Solid::SetFactor(double tModulus, int tID, double tJuLeiRadius)
 {
 	this->gModulus = tModulus;
 	this->gID = tID;
+	this->gJuLeiRadius = tJuLeiRadius;
 }
 
 const double Solid::GetModulus()
@@ -116,36 +121,46 @@ int Solid::GetID()
 	return this->gID;
 }
 
+const double Solid::GetJuLeiRadius()
+{
+	return this->gJuLeiRadius;
+}
+
 void Solid::AddPointToThisSolid(Point& tPointP)
 {
 	this->gThisSolidPointLt.push_back(tPointP);
 }
 
+list<Point>* Solid::GetThisSolidPointLt()
+{
+	return &gThisSolidPointLt;
+}
+
 void Solid::SetEightPointOfCuboid(Point* tResult)
 {
 	//(0,0,0)
-	Point mxyz(this->gXMin->GetX(), this->gYMin->GetY(), this->gZMin->GetZ());
+	Point mxyz(this->gXMin.GetX(), this->gYMin.GetY(), this->gZMin.GetZ());
 	*(tResult + 0) = mxyz;
 	//(0,0,1)
-	Point mxyZ(this->gXMin->GetX(), this->gYMin->GetY(), this->gZMax->GetZ());
+	Point mxyZ(this->gXMin.GetX(), this->gYMin.GetY(), this->gZMax.GetZ());
 	*(tResult + 1) = mxyZ;
 	//(0,1,0)
-	Point mxYz(this->gXMin->GetX(), this->gYMax->GetY(), this->gZMin->GetZ());
+	Point mxYz(this->gXMin.GetX(), this->gYMax.GetY(), this->gZMin.GetZ());
 	*(tResult + 2) = mxYz;
 	//(0,1,1)
-	Point mxYZ(this->gXMin->GetX(), this->gYMax->GetY(), this->gZMax->GetZ());
+	Point mxYZ(this->gXMin.GetX(), this->gYMax.GetY(), this->gZMax.GetZ());
 	*(tResult + 3) = mxYZ;
 
 	//(1,0,0)
-	Point mXyz(this->gXMax->GetX(), this->gYMin->GetY(), this->gZMin->GetZ());
+	Point mXyz(this->gXMax.GetX(), this->gYMin.GetY(), this->gZMin.GetZ());
 	*(tResult + 4) = mXyz;
 	//(1,0,1)
-	Point mXyZ(this->gXMax->GetX(), this->gYMin->GetY(), this->gZMax->GetZ());
+	Point mXyZ(this->gXMax.GetX(), this->gYMin.GetY(), this->gZMax.GetZ());
 	*(tResult + 5) = mXyZ;
 	//(1,1,0)
-	Point mXYz(this->gXMax->GetX(), this->gYMax->GetY(), this->gZMin->GetZ());
+	Point mXYz(this->gXMax.GetX(), this->gYMax.GetY(), this->gZMin.GetZ());
 	*(tResult + 6) = mXYz;
 	//(1,1,1)
-	Point mXYZ(this->gXMax->GetX(), this->gYMax->GetY(), this->gZMax->GetZ());
+	Point mXYZ(this->gXMax.GetX(), this->gYMax.GetY(), this->gZMax.GetZ());
 	*(tResult + 7) = mXYZ;
 }

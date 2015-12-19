@@ -18,6 +18,11 @@ Cluster::~Cluster(void)
 {
 }
 
+void Cluster::SetMaxMrFromData(double tMaxMr)
+{
+	this->gMaxMrFromData = tMaxMr;
+}
+
 double Cluster::MaxDisOfTwoSolid(Solid* tFirst, Solid* tSecond)
 {
 	Point *mEightPointFir = new Point[8];
@@ -26,7 +31,22 @@ double Cluster::MaxDisOfTwoSolid(Solid* tFirst, Solid* tSecond)
 	tSecond->SetEightPointOfCuboid(mEightPointSec);
 	double mResult = 0.0, tempRes = 0.0;
 	double mx = 0.0, my = 0.0, mz = 0.0;
-	for(int x = 0; x < 8; x ++)
+
+	double mSelfCenterX = (tFirst->GetXMax()->GetX() + tFirst->GetXMin()->GetX()) / 2;
+	double mSelfCenterY = (tFirst->GetYMax()->GetY() + tFirst->GetYMin()->GetY()) / 2;
+	double mSelfCenterZ = (tFirst->GetZMax()->GetZ() + tFirst->GetZMin()->GetZ()) / 2;
+	for (int y = 0; y < 8; y++)
+	{
+		mx = pow((mSelfCenterX - (mEightPointSec + y)->GetX()), 2);
+		my = pow((mSelfCenterY - (mEightPointSec + y)->GetY()), 2);
+		mz = pow((mSelfCenterZ - (mEightPointSec + y)->GetZ()), 2);
+		tempRes = sqrt(mx + my + mz);
+		if (tempRes > mResult)
+		{
+			mResult = tempRes;
+		}
+	}
+	/*for(int x = 0; x < 8; x ++)
 	{
 		for(int y = 0; y < 8; y ++)
 		{
@@ -34,32 +54,36 @@ double Cluster::MaxDisOfTwoSolid(Solid* tFirst, Solid* tSecond)
 			my = pow(((mEightPointFir + x)->GetY() - (mEightPointSec + y)->GetY()), 2);
 			mz = pow(((mEightPointFir + x)->GetZ() - (mEightPointSec + y)->GetZ()), 2);
 			tempRes = sqrt(mx + my + mz);
+			if (tempRes > mResult)
+			{
+				mResult = tempRes;
+			}
 		}
-		if(tempRes > mResult)
-		{
-			mResult = tempRes;
-		}
-	}
+	}*/
 	return mResult;
 }
 
-void Cluster::ClusterByR(vector<Solid>* tSolidVecP, double tR)
+void Cluster::ClusterByR(vector<Solid>* tSolidVecP)
 {
 	int mSolidCount = tSolidVecP->size();
 	for(int x = 0; x < mSolidCount; x ++)
 	{
 		vector<int> mOneClusterVec;
+		//自身漏洞
+		mOneClusterVec.push_back(tSolidVecP->at(x).GetID());
+		
+		//聚类半径为cm，而坐标单位mm
+		double mR = tSolidVecP->at(x).GetJuLeiRadius() * 10 + gMaxMrFromData * 10;
+		
 		//邻居漏洞
 		for(int y = 0; y < mSolidCount; y ++)
 		{
-			if(MaxDisOfTwoSolid(&tSolidVecP->at(x), &tSolidVecP->at(y)) <= tR && x != y)
+			if(MaxDisOfTwoSolid(&tSolidVecP->at(x), &tSolidVecP->at(y)) <= mR && tSolidVecP->at(x).GetModulus() > tSolidVecP->at(y).GetModulus() && x != y)
 			{
 				mOneClusterVec.push_back(tSolidVecP->at(y).GetID());
 			}
 		}
-		//自身漏洞
-		mOneClusterVec.push_back(tSolidVecP->at(x).GetID());
-
+		
 		gClusterResult.push_back(mOneClusterVec);
 	}
 }
@@ -88,7 +112,7 @@ vector<vector<int>>* Cluster::GetClusterResult()
 
 void Cluster::DisplayClusterResult()
 {
-	cout << "******************聚类结果begin**************************" << endl;
+	cout << "聚类结果begin" << endl;
 	vector<vector<int>>::iterator mVecVecIter = this->gClusterResult.begin();
 	while (mVecVecIter != this->gClusterResult.end())
 	{
@@ -102,5 +126,5 @@ void Cluster::DisplayClusterResult()
 		cout << endl;
 		mVecVecIter++;
 	}
-	cout << "******************聚类结果end**************************" << endl;
+	cout << "聚类结果end" << endl;
 }

@@ -51,12 +51,14 @@ void DataOperation::LoadFile(const char* t_path)
 		int mSolidID = -1;
 		while(getline(mNetFile, mRowData))
 		{
+			Solid mOneSolidObj;
 			if(mRowData.find("solid") != string::npos && mRowData.find("endsolid") == string::npos)
 			{
 				mSolidID ++;
 				gSolidCount ++;
-				double mModulus = 1.77;
-				Solid mOneSolidObj(mModulus, mSolidID);
+				double mModulus = atof(mRowData.substr(mRowData.find("=") + 1, mRowData.find_last_of(" ")).c_str());
+				double mR = atof((mRowData.substr(mRowData.find_last_of("=") + 1)).c_str());
+				Solid mOneSolidObj(mModulus, mSolidID, mR);
 				this->gAllSolidVec.push_back(mOneSolidObj);
 			}
 			/*若一个文件中含有多个漏洞，即有多个solid
@@ -70,15 +72,13 @@ void DataOperation::LoadFile(const char* t_path)
 				this->gAllSolidVec.at(mSolidID).AddPointToThisSolid(mOnePointObj);
 				delete mOnePointArr;
 			}
-			else if(mRowData.find("endsolid") != string::npos)
+			else if(mRowData.find("endsolidsolid") != string::npos)
 			{
-				this->gAllSolidVec.at(mSolidID).CompareForCuboid();
+				this->gAllSolidVec.at(mSolidID).CompareForCuboid(gAllSolidVec.at(mSolidID).GetThisSolidPointLt());
 			}
 		}
 	}
 }
-
-
 
 void DataOperation::SaveFile(const char* t_path)
 {

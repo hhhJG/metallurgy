@@ -57,7 +57,7 @@ void SixPoint::CompareForSixPoint(list<Point>* tAllPointList)
 	sstr << mSolidID; 
 	sstr >> str; 
 	this->gAllSolidIDStr.append(str.append(","));
-	
+	sstr.str("");
 
 	while(mPointLtIter != tAllPointList->end())
 	{
@@ -292,6 +292,7 @@ void SixPoint::GroupForSolids(vector<Point>* tAllSolidPointVec, int* tGroupCode,
 					stringstream ss;
 					ss<< (x + 1);
 					mSolidInforStr.append(ss.str().append(","));
+					ss.str("");
 				}
 				else
 				{
@@ -307,6 +308,7 @@ void SixPoint::GroupForSolids(vector<Point>* tAllSolidPointVec, int* tGroupCode,
 						stringstream ss;
 						ss<< (x + 1);
 						mSolidInforStr.append(ss.str().append(","));
+						ss.str("");
 					}
 					if(mOldIndex != -1 && mOldIndex != mIndex)
 					{
